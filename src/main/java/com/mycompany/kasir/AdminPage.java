@@ -4,6 +4,11 @@
  */
 package com.mycompany.kasir;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -205,6 +210,9 @@ public class AdminPage extends javax.swing.JFrame {
         jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField2KeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField2KeyTyped(evt);
             }
         });
         jPanel6.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 172, -1));
@@ -459,6 +467,8 @@ public class AdminPage extends javax.swing.JFrame {
                     viewDataUser(""); 
                     JOptionPane.showMessageDialog(this, "Data "+ username +" telah terhapus");
                 } catch (SQLException e) {
+                    String errorMessage = "Log: " + e.getMessage();
+                    LogSaver.saveLog(errorMessage);
                 }
             }
             
@@ -529,6 +539,8 @@ public class AdminPage extends javax.swing.JFrame {
                     viewDataProduk(""); 
                     JOptionPane.showMessageDialog(this, "Data "+kode+" telah terhapus");
                 } catch (SQLException e) {
+                    String errorMessage = "Log: " + e.getMessage();
+                    LogSaver.saveLog(errorMessage);
                 }
             }
             
@@ -556,6 +568,10 @@ public class AdminPage extends javax.swing.JFrame {
     viewDataProduk(""); // Or provide a default query
 }
     }//GEN-LAST:event_jTextField3KeyReleased
+
+    private void jTextField2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2KeyTyped
      
     /**
      * @param args the command line arguments
@@ -651,7 +667,9 @@ public class AdminPage extends javax.swing.JFrame {
                 
                 no++;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            String errorMessage = "Log: " + e.getMessage();
+            LogSaver.saveLog(errorMessage);
         }
     }
 
@@ -713,7 +731,10 @@ public class AdminPage extends javax.swing.JFrame {
                 
                 no++;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            String errorMessage = "Log: " + e.getMessage();
+            LogSaver.saveLog(errorMessage);
         }
     }
+    
 }

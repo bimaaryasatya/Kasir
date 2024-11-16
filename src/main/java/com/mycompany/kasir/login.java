@@ -233,6 +233,8 @@ public class login extends javax.swing.JFrame {
             }
         }catch(HeadlessException | SQLException e) {
             System.err.println(e.getMessage());
+            String errorMessage = "Log: " + e.getMessage();
+            LogSaver.saveLog(errorMessage);
         }
     }
 }
