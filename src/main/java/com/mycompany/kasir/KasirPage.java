@@ -4,9 +4,14 @@
  */
 package com.mycompany.kasir;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,6 +26,7 @@ public class KasirPage extends javax.swing.JFrame {
      */
     public KasirPage() {
         initComponents();
+        loadReport(LocalDate.now().toString());
     }
 
     KasirPage(Profile P) {
@@ -69,6 +75,8 @@ public class KasirPage extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
@@ -150,11 +158,21 @@ public class KasirPage extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Tambah ke Keranjang");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton5.setBackground(new java.awt.Color(51, 51, 51));
         jButton5.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
         jButton5.setForeground(new java.awt.Color(255, 255, 255));
         jButton5.setText("Hapus Dari Keranjang");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -358,7 +376,8 @@ public class KasirPage extends javax.swing.JFrame {
 
         jLabel16.setFont(new java.awt.Font("Poppins SemiBold", 0, 14)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel16.setText("Total Harga:");
+        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel16.setText("Total Kembalian:");
 
         jLabel17.setFont(new java.awt.Font("Poppins SemiBold", 0, 14)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(51, 51, 51));
@@ -368,29 +387,63 @@ public class KasirPage extends javax.swing.JFrame {
         jButton4.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Checkout");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel23.setFont(new java.awt.Font("Poppins SemiBold", 0, 14)); // NOI18N
+        jLabel23.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel23.setText("Jumlah Bayar:");
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 672, Short.MAX_VALUE)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(894, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel17))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(5, 5, 5)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(jLabel17)
-                    .addComponent(jButton4))
-                .addGap(56, 56, 56))
+                    .addComponent(jLabel17))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap())
         );
 
         jPanel5.add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -517,24 +570,74 @@ public class KasirPage extends javax.swing.JFrame {
 
     private void txtProdukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProdukActionPerformed
         // TODO add your handling code here:
-        try {
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            String kode = txtProduk.getText();
-            Connection K = koneksi.Go();
-            Statement S = K.createStatement();
-            String Q = "SELECT * FROM products WHERE product_code='"+kode+"'";
-            ResultSet R = S.executeQuery(Q);
-            while (R.next()) {                 
-                int id = R.getInt("id");
-                String nama = R.getString("product_name");
-                String harga = R.getString("product_price_s");
-                Object[] data = {id,nama,1, harga};
-                model.addRow(data); 
-            }
-            
-        } catch (Exception e) {
-        }
+        addCartItem();
     }//GEN-LAST:event_txtProdukActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        addCartItem();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        int b = jTable1.getSelectedRow();
+        if (b != -1) {
+            DefaultTableModel m = (DefaultTableModel) jTable1.getModel();
+            m.removeRow(b);
+            updateTotalHarga();
+        } else {
+            JOptionPane.showMessageDialog(this, "Anda belum memilih data");
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        try {
+        String totalHargaStr = jLabel15.getText().replace("Rp. ", "").replace(",", "");
+        double totalHarga = Double.parseDouble(totalHargaStr);
+        double jumlahBayar = Double.parseDouble(jTextField1.getText());
+        if (jumlahBayar < totalHarga) {
+            JOptionPane.showMessageDialog(this, "Jumlah bayar kurang dari total harga!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Connection con = koneksi.Go();
+        String insertTransactionSQL = "INSERT INTO transaction (total_harga, jumlah_bayar, timestamp) VALUES (?, ?, NOW())";
+        PreparedStatement pstTransaction = con.prepareStatement(insertTransactionSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
+        pstTransaction.setDouble(1, totalHarga);
+        pstTransaction.setDouble(2, jumlahBayar);
+        pstTransaction.executeUpdate();
+        java.sql.ResultSet rsTransaction = pstTransaction.getGeneratedKeys();
+        int transactionId = 0;
+        if (rsTransaction.next()) {
+            transactionId = rsTransaction.getInt(1);
+        }
+        String insertDetailSQL = "INSERT INTO transaction_detail (id_transaksi, nama_barang, qty) VALUES (?, ?, ?)";
+        PreparedStatement pstDetail = con.prepareStatement(insertDetailSQL);
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String namaBarang = model.getValueAt(i, 1).toString();
+            int qty = Integer.parseInt(model.getValueAt(i, 2).toString());
+            pstDetail.setInt(1, transactionId);
+            pstDetail.setString(2, namaBarang);
+            pstDetail.setInt(3, qty);
+            pstDetail.addBatch();
+        }
+        pstDetail.executeBatch();
+        JOptionPane.showMessageDialog(this, "Transaksi berhasil diproses!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        jTextField1.setText("");
+        model.setRowCount(0);
+    }  catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        // TODO add your handling code here:
+        numberOnly(evt);
+    }//GEN-LAST:event_jTextField1KeyReleased
 
     /**
      * @param args the command line arguments
@@ -592,6 +695,7 @@ public class KasirPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -616,7 +720,75 @@ public class KasirPage extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField txtProduk;
     // End of variables declaration//GEN-END:variables
+
+    private void addCartItem() {
+        try {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            String kode = txtProduk.getText();
+            Connection K = koneksi.Go();
+            Statement S = K.createStatement();
+            String Q = "SELECT * FROM products WHERE product_code='"+kode+"'";
+            ResultSet R = S.executeQuery(Q);
+            while (R.next()) {                 
+                int id = R.getInt("id");
+                String nama = R.getString("product_name");
+                String harga = R.getString("product_price_s");
+                Object[] data = {id,nama,1, harga};
+                model.addRow(data); 
+            }
+            
+        } catch (Exception e) {
+        }    
+    }
+
+    private void updateTotalHarga() {
+        try {
+            double total = 0;
+            int r = jTable1.getRowCount();
+            for (int i = 0; i < r; i++) {
+                double QTY = Double.parseDouble(jTable1.getValueAt(i, 2).toString());
+                double PRC = Double.parseDouble(jTable1.getValueAt(i, 3).toString());
+                total += (QTY * PRC);
+            }
+            double ppn = total * 12/100;
+            double net_total = total + ppn;
+            jLabel12.setText("Rp. " + (long) total);
+            jLabel14.setText("Rp. " + (long) ppn);
+            jLabel15.setText("Rp. " + (long) net_total);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }}
+    
+    private void numberOnly(KeyEvent evt) {
+        char c = evt.getKeyChar();
+        if(!Character.isDigit(c)){
+            evt.consume();
+        }
+    }
+    
+    private void loadReport(String date) {
+    try {
+        Connection con = koneksi.Go();
+        String query = "SELECT id, timestamp, jumlah_bayar FROM transaction WHERE DATE(timestamp) = ?";
+        PreparedStatement pst = con.prepareStatement(query);
+        pst.setString(1, date);
+        ResultSet rs = pst.executeQuery();
+        DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable3.getModel();
+        model.setRowCount(0);
+        while (rs.next()) {
+            int idTransaksi = rs.getInt("id");
+            String waktu = rs.getTimestamp("timestamp").toString();
+            double uangMasuk = rs.getDouble("jumlah_bayar");
+            model.addRow(new Object[]{idTransaksi, waktu, uangMasuk});
+        }
+        rs.close();
+        pst.close();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
 }
