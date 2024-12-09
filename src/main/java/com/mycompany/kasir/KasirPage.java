@@ -27,6 +27,7 @@ public class KasirPage extends javax.swing.JFrame {
     public KasirPage() {
         initComponents();
         loadReport(LocalDate.now().toString());
+        loadTransactionHistory();
     }
 
     KasirPage(Profile P) {
@@ -92,6 +93,8 @@ public class KasirPage extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
 
@@ -582,16 +585,37 @@ public class KasirPage extends javax.swing.JFrame {
         jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel24.setText("Riwayat Transaksi Penjualan");
 
+        jLabel25.setFont(new java.awt.Font("Poppins Medium", 0, 14)); // NOI18N
+        jLabel25.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel25.setText("Kasir:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1263, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
+                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(521, 521, 521))
         );
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel12Layout.createSequentialGroup()
-                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -696,6 +720,13 @@ public class KasirPage extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        String selectedItem = jComboBox1.getSelectedItem().toString();
+        String[] sp = selectedItem.split(" - ");
+        int userId = Integer.parseInt(sp[0]);
+        loadCashierHistory(userId);
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -737,6 +768,7 @@ public class KasirPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -754,6 +786,7 @@ public class KasirPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -853,4 +886,53 @@ public class KasirPage extends javax.swing.JFrame {
     }
 }
 
+    private void loadTransactionHistory() {
+    try {
+        Connection con = koneksi.Go();
+        String query = "SELECT td.id, t.timestamp AS tanggal, td.nama_barang AS nama_produk, td.qty AS jumlah_terjual " +
+                       "FROM transaction_detail td " +
+                       "INNER JOIN transaction t ON td.id_transaksi = t.id";
+        PreparedStatement pst = con.prepareStatement(query);
+        java.sql.ResultSet rs = pst.executeQuery();
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable4.getModel();
+        model.setRowCount(0);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String tanggal = rs.getTimestamp("tanggal").toString();
+            String namaProduk = rs.getString("nama_produk");
+            int jumlahTerjual = rs.getInt("jumlah_terjual");
+            model.addRow(new Object[]{id, tanggal, namaProduk, jumlahTerjual});
+        }
+        rs.close();
+        pst.close();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan [KP-906]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void loadCashierHistory(int uid) {
+    try {
+        Connection con = koneksi.Go();
+        String query = "SELECT td.id, t.timestamp AS tanggal, td.nama_barang AS nama_produk, td.qty AS jumlah_terjual " +
+                       "FROM transaction_detail td " +
+                       "INNER JOIN transaction t ON td.id_transaksi = t.id " +
+                       "WHERE t.id_user = ?";
+        PreparedStatement pst = con.prepareStatement(query);
+        pst.setInt(1, uid);
+        java.sql.ResultSet rs = pst.executeQuery();
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable4.getModel();
+        model.setRowCount(0);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String tanggal = rs.getTimestamp("tanggal").toString();
+            String namaProduk = rs.getString("nama_produk");
+            int jumlahTerjual = rs.getInt("jumlah_terjual");
+            model.addRow(new Object[]{id, tanggal, namaProduk, jumlahTerjual});
+        }
+        rs.close();
+        pst.close();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan [KP949]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
