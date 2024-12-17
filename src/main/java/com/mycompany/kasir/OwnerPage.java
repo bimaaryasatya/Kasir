@@ -4,6 +4,19 @@
  */
 package com.mycompany.kasir;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 /**
  *
  * @author LABKOM
@@ -15,8 +28,57 @@ public class OwnerPage extends javax.swing.JFrame {
      */
     public OwnerPage() {
         initComponents();
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Multi-Series Bar Chart", // Chart title
+                "Category", // X-axis Label
+                "Value", // Y-axis Label
+                createDataset(),
+                PlotOrientation.VERTICAL, // Orientation (vertical)
+                true, // Include legend
+                true, // Tooltips
+                false // URLs// Dataset
+        );
+        
+         CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
+        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setDefaultItemLabelsVisible(true);
+        ItemLabelPosition position = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
+                TextAnchor.TOP_CENTER);
+        renderer.setDefaultPositiveItemLabelPosition(position);
+        
+        
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        jPanel3.add(chart)
     }
 
+     private static CategoryDataset createDataset() {
+        final String JAN = "JANUARI";
+        final String FEB = "FEBRUARI";
+        final String MAR = "MARET";
+
+        final String income = "Income"; //dalam juta
+        final String QTY = "Item Terjual";
+        final String TRS = "Jumlah Transaksi";
+
+        final DefaultCategoryDataset dataset
+                = new DefaultCategoryDataset();
+
+        dataset.addValue(1.0, JAN, income);
+        dataset.addValue(3.0, JAN, TRS);
+        dataset.addValue(5.0, JAN, QTY);
+
+        dataset.addValue(4.0, FEB, income);
+        dataset.addValue(6.0, FEB, TRS);
+        dataset.addValue(7.0, FEB, QTY);
+
+        dataset.addValue(3.0, MAR, income);
+        dataset.addValue(5.0, MAR, TRS);
+        dataset.addValue(3.0, MAR, QTY);
+
+        return dataset;
+
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,7 +119,6 @@ public class OwnerPage extends javax.swing.JFrame {
         jDateChooser6 = new com.toedter.calendar.JDateChooser();
         jLabel12 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -269,7 +330,7 @@ public class OwnerPage extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDateChooser6, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel12))
-                .addContainerGap(183, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -310,21 +371,15 @@ public class OwnerPage extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
 
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("Grafik Penjualan");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 554, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jLabel14)
-                .addContainerGap(251, Short.MAX_VALUE))
+            .addGap(0, 282, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -410,7 +465,6 @@ public class OwnerPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
