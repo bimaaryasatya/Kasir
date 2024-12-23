@@ -4,17 +4,20 @@
  */
 package com.mycompany.kasir;
 
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.ui.TextAnchor;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -28,57 +31,13 @@ public class OwnerPage extends javax.swing.JFrame {
      */
     public OwnerPage() {
         initComponents();
-        JFreeChart chart = ChartFactory.createBarChart(
-                "Multi-Series Bar Chart", // Chart title
-                "Category", // X-axis Label
-                "Value", // Y-axis Label
-                createDataset(),
-                PlotOrientation.VERTICAL, // Orientation (vertical)
-                true, // Include legend
-                true, // Tooltips
-                false // URLs// Dataset
-        );
-        
-         CategoryItemRenderer renderer = ((CategoryPlot) chart.getPlot()).getRenderer();
-        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
-        renderer.setDefaultItemLabelsVisible(true);
-        ItemLabelPosition position = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
-                TextAnchor.TOP_CENTER);
-        renderer.setDefaultPositiveItemLabelPosition(position);
-        
-        
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
-        jPanel3.add(chart)
+        loadTopKasir();
+        loadTopProduct();
+        loadSalesChart();
+        calculateProfit();
+        calculateProductSold();
     }
 
-     private static CategoryDataset createDataset() {
-        final String JAN = "JANUARI";
-        final String FEB = "FEBRUARI";
-        final String MAR = "MARET";
-
-        final String income = "Income"; //dalam juta
-        final String QTY = "Item Terjual";
-        final String TRS = "Jumlah Transaksi";
-
-        final DefaultCategoryDataset dataset
-                = new DefaultCategoryDataset();
-
-        dataset.addValue(1.0, JAN, income);
-        dataset.addValue(3.0, JAN, TRS);
-        dataset.addValue(5.0, JAN, QTY);
-
-        dataset.addValue(4.0, FEB, income);
-        dataset.addValue(6.0, FEB, TRS);
-        dataset.addValue(7.0, FEB, QTY);
-
-        dataset.addValue(3.0, MAR, income);
-        dataset.addValue(5.0, MAR, TRS);
-        dataset.addValue(3.0, MAR, QTY);
-
-        return dataset;
-
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -485,4 +444,190 @@ public class OwnerPage extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    private void loadTopKasir() {
+        try {
+            Connection con = koneksi.Go();
+            String query = "SELECT u.nama AS nama_kasir, COUNT(t.id) AS jml_transaksi, SUM(td.qty) AS jml_produk "
+                    + "FROM transaction t "
+                    + "INNER JOIN users u ON t.id_user = u.id "
+                    + "INNER JOIN transaction_detail td ON t.id = td.id_transaksi "
+                    + "GROUP BY u.id, u.nama "
+                    + "ORDER BY jml_transaksi DESC";
+            PreparedStatement pst = con.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0);
+            int counter = 1;
+            while (rs.next()) {
+                String namaKasir = rs.getString("nama_kasir");
+                int jmlTransaksi = rs.getInt("jml_transaksi");
+                int jmlProduk = rs.getInt("jml_produk");
+                model.addRow(new Object[]{counter++, namaKasir, jmlTransaksi, jmlProduk});
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-517]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void loadSalesChart() {
+        try {
+            Date startDate = jDateChooser1.getDate();
+            Date endDate = jDateChooser2.getDate();
+            if (startDate.after(endDate)) {
+                JOptionPane.showMessageDialog(this, "Tanggal awal tidak boleh setelah tanggal akhir!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String start = sdf.format(startDate);
+            String end = sdf.format(endDate);
+            Connection con = koneksi.Go();
+            String query = "SELECT DATE(t.timestamp) AS tanggal, SUM(td.qty) AS total_terjual "
+                    + "FROM transaction_detail td "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
+                    + "WHERE DATE(t.timestamp) BETWEEN ? AND ? "
+                    + "GROUP BY DATE(t.timestamp) "
+                    + "ORDER BY DATE(t.timestamp) ASC";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, start);
+            pst.setString(2, end);
+            ResultSet rs = pst.executeQuery();
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            while (rs.next()) {
+                String date = rs.getString("tanggal");
+                int totalSold = rs.getInt("total_terjual");
+                dataset.addValue(totalSold, "Total Terjual", date);
+            }
+            rs.close();
+            pst.close();
+            JFreeChart chart = ChartFactory.createLineChart(
+                    "Penjualan Produk Per Hari",
+                    "Tanggal",
+                    "Jumlah Produk Terjual",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+            );
+            chart.getCategoryPlot().setRangeGridlinePaint(Color.BLUE);
+            ChartPanel panel = new ChartPanel(chart);
+            panel.setMouseWheelEnabled(true);
+            panel.setPreferredSize(jPanel3.getSize());
+            jPanel3.removeAll();
+            jPanel3.add(panel);
+            jPanel3.revalidate();
+            jPanel3.repaint();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-520]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void calculateProfit() {
+        try {
+            Date startDate = jDateChooser5.getDate();
+            Date endDate = jDateChooser6.getDate();
+            if (startDate.after(endDate)) {
+                JOptionPane.showMessageDialog(this, "Tanggal awal tidak boleh setelah tanggal akhir!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String start = sdf.format(startDate);
+            String end = sdf.format(endDate);
+            Connection con = koneksi.Go();
+            String query = "SELECT SUM((p.harga_jual - p.harga_beli) * td.qty) AS total_profit "
+                    + "FROM transaction_detail td "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
+                    + "INNER JOIN produk p ON td.id_produk = p.kode "
+                    + "WHERE DATE(t.timestamp) BETWEEN ? AND ?";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, start);
+            pst.setString(2, end);
+            ResultSet rs = pst.executeQuery();
+            double totalProfit = 0;
+            if (rs.next()) {
+                totalProfit = rs.getDouble("total_profit");
+            }
+            rs.close();
+            pst.close();
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new java.util.Locale("id", "ID"));
+            String formattedProfit = currencyFormat.format(totalProfit).replace("Rp", "Rp ");
+            jLabel12.setText(formattedProfit);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-588]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void calculateProductSold() {
+        try {
+            Date startDate = jDateChooser1.getDate();
+            Date endDate = jDateChooser2.getDate();
+            if (startDate == null || endDate == null) {
+                JOptionPane.showMessageDialog(this, "Pilih rentang tanggal terlebih dahulu!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (startDate.after(endDate)) {
+                JOptionPane.showMessageDialog(this, "Tanggal awal tidak boleh setelah tanggal akhir!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String start = sdf.format(startDate);
+            String end = sdf.format(endDate);
+            Connection con = koneksi.Go();
+            String query = "SELECT SUM(td.qty) AS total_sold "
+                    + "FROM transaction_detail td "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
+                    + "WHERE DATE(t.timestamp) BETWEEN ? AND ?";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, start);
+            pst.setString(2, end);
+            ResultSet rs = pst.executeQuery();
+            int totalSold = 0;
+            if (rs.next()) {
+                totalSold = rs.getInt("total_sold");
+            }
+            rs.close();
+            pst.close();
+            jLabel2.setText(String.valueOf(totalSold));
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-595]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void loadTopProduct() {
+        try {
+            Connection con = koneksi.Go();
+            String query = "SELECT p.nama AS nama_barang, SUM(td.qty) AS jumlah_terjual "
+                    + "FROM transaction_detail td "
+                    + "INNER JOIN produk p ON td.id_produk = p.kode "
+                    + "GROUP BY p.nama "
+                    + "ORDER BY SUM(td.qty) DESC";
+            PreparedStatement pst = con.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("No");
+            model.addColumn("Nama Barang");
+            model.addColumn("Jumlah Terjual");
+            int no = 1;
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    rs.getString("nama_barang"),
+                    rs.getInt("jumlah_terjual")
+                });
+            }
+            jTable1.setModel(model);
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-629]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 }
