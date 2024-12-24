@@ -221,7 +221,7 @@ public class login extends javax.swing.JFrame {
                     this.setVisible(false); 
                     kas.setVisible(true);
                 }else if(P.getLevel().equals("Owner")){
-                    owner_page own = new owner_page(P);
+                    OwnerPage own = new OwnerPage(P);
                     own.setExtendedState(Frame.MAXIMIZED_BOTH);
                     this.setVisible(false); 
                     own.setVisible(true); 

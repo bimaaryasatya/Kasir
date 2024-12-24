@@ -31,8 +31,10 @@ public class KasirPage extends javax.swing.JFrame {
     }
 
     KasirPage(Profile P) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+        this.P = P;
+        initComponents();
+        loadReport(LocalDate.now().toString());
+        loadTransactionHistory();    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -103,7 +105,7 @@ public class KasirPage extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(239, 239, 239));
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mycompany/kasir/rb_1280.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rb_1280.png"))); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Poppins SemiBold", 0, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(51, 51, 51));
@@ -155,7 +157,7 @@ public class KasirPage extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(51, 51, 51));
         jLabel1.setText("Produk:");
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mycompany/kasir/icons8-search-48.png"))); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/icons8-search-48.png"))); // NOI18N
 
         jButton2.setBackground(new java.awt.Color(51, 51, 51));
         jButton2.setFont(new java.awt.Font("Poppins Medium", 0, 12)); // NOI18N
@@ -199,7 +201,7 @@ public class KasirPage extends javax.swing.JFrame {
                 .addComponent(jButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(511, Short.MAX_VALUE))
+                .addContainerGap(537, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -677,10 +679,11 @@ public class KasirPage extends javax.swing.JFrame {
             return;
         }
         Connection con = koneksi.Go();
-        String insertTransactionSQL = "INSERT INTO transaction (total_harga, jumlah_bayar, timestamp) VALUES (?, ?, NOW())";
+        String insertTransactionSQL = "INSERT INTO transaction (id_user, total_harga, jumlah_bayar, timestamp) VALUES (?, ?, ?, NOW())";
         PreparedStatement pstTransaction = con.prepareStatement(insertTransactionSQL, java.sql.Statement.RETURN_GENERATED_KEYS);
-        pstTransaction.setDouble(1, totalHarga);
-        pstTransaction.setDouble(2, jumlahBayar);
+        pstTransaction.setInt(1, P.getId());
+        pstTransaction.setDouble(2, totalHarga);
+        pstTransaction.setDouble(3, jumlahBayar);
         pstTransaction.executeUpdate();
         java.sql.ResultSet rsTransaction = pstTransaction.getGeneratedKeys();
         int transactionId = 0;

@@ -19,23 +19,29 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import com.toedter.calendar.JDateChooser;
+import java.util.Calendar;
 
 /**
  *
  * @author LABKOM
  */
 public class OwnerPage extends javax.swing.JFrame {
-
+    
+    Profile P;
+    boolean start = true;
     /**
      * Creates new form OwnerPage
      */
-    public OwnerPage() {
+    public OwnerPage(Profile P) {
         initComponents();
+        setDates();
         loadTopKasir();
         loadTopProduct();
         loadSalesChart();
         calculateProfit();
         calculateProductSold();
+        start = false;
     }
 
     /**
@@ -51,6 +57,7 @@ public class OwnerPage extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -78,6 +85,14 @@ public class OwnerPage extends javax.swing.JFrame {
         jDateChooser6 = new com.toedter.calendar.JDateChooser();
         jLabel12 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jDateChooser7 = new com.toedter.calendar.JDateChooser();
+        jDateChooser8 = new com.toedter.calendar.JDateChooser();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,7 +102,7 @@ public class OwnerPage extends javax.swing.JFrame {
         jLabel5.setText("Welcome,");
 
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mycompany/kasir/rb_1280.png"))); // NOI18N
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rb_1280.png"))); // NOI18N
 
         jButton1.setBackground(new java.awt.Color(51, 51, 51));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
@@ -137,6 +152,18 @@ public class OwnerPage extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("0");
+
+        jDateChooser1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser1PropertyChange(evt);
+            }
+        });
+
+        jDateChooser2.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser2PropertyChange(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -199,6 +226,18 @@ public class OwnerPage extends javax.swing.JFrame {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Sampai:");
 
+        jDateChooser3.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser3PropertyChange(evt);
+            }
+        });
+
+        jDateChooser4.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser4PropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -245,6 +284,10 @@ public class OwnerPage extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(1).setHeaderValue("Nama Barang");
+            jTable1.getColumnModel().getColumn(2).setHeaderValue("Jumlah Terjual");
+        }
 
         jPanel7.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -261,11 +304,23 @@ public class OwnerPage extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
+        jDateChooser5.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser5PropertyChange(evt);
+            }
+        });
+
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Dari:");
 
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
         jLabel11.setText("Sampai:");
+
+        jDateChooser6.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser6PropertyChange(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
@@ -338,7 +393,7 @@ public class OwnerPage extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 282, Short.MAX_VALUE)
+            .addGap(0, 251, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -367,7 +422,80 @@ public class OwnerPage extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        getContentPane().add(jPanel5, java.awt.BorderLayout.CENTER);
+        jTabbedPane1.addTab("Overview", jPanel5);
+
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel14.setText("Top Kasir");
+
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel15.setText("Periode:");
+
+        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel16.setText("Sampai:");
+
+        jDateChooser7.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser7PropertyChange(evt);
+            }
+        });
+
+        jDateChooser8.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser8PropertyChange(evt);
+            }
+        });
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Nomor", "Kasir", "Jml. Transaksi", "Jml. Produk"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jDateChooser8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDateChooser7, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane2)
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateChooser7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateChooser8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Top Kasir", jPanel10);
+
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -375,6 +503,64 @@ public class OwnerPage extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        calculateProductSold();
+        loadSalesChart();
+        }
+    }//GEN-LAST:event_jDateChooser1PropertyChange
+
+    private void jDateChooser2PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser2PropertyChange
+        // TODO add your handling code here
+        if (!start) {
+        calculateProductSold();
+        loadSalesChart();
+        }
+    }//GEN-LAST:event_jDateChooser2PropertyChange
+
+    private void jDateChooser5PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser5PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        calculateProfit();
+        }
+    }//GEN-LAST:event_jDateChooser5PropertyChange
+
+    private void jDateChooser6PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser6PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        calculateProfit();
+        }
+    }//GEN-LAST:event_jDateChooser6PropertyChange
+
+    private void jDateChooser3PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser3PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        loadTopProduct();
+        }
+    }//GEN-LAST:event_jDateChooser3PropertyChange
+
+    private void jDateChooser4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser4PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        loadTopProduct();
+        }
+    }//GEN-LAST:event_jDateChooser4PropertyChange
+
+    private void jDateChooser7PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser7PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        loadTopKasir();
+        }
+    }//GEN-LAST:event_jDateChooser7PropertyChange
+
+    private void jDateChooser8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser8PropertyChange
+        // TODO add your handling code here:
+        if (!start) {
+        loadTopKasir();
+        }
+    }//GEN-LAST:event_jDateChooser8PropertyChange
 
     /**
      * @param args the command line arguments
@@ -406,7 +592,7 @@ public class OwnerPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new OwnerPage().setVisible(true);
+                new OwnerPage(null).setVisible(true);
             }
         });
     }
@@ -419,11 +605,16 @@ public class OwnerPage extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jDateChooser4;
     private com.toedter.calendar.JDateChooser jDateChooser5;
     private com.toedter.calendar.JDateChooser jDateChooser6;
+    private com.toedter.calendar.JDateChooser jDateChooser7;
+    private com.toedter.calendar.JDateChooser jDateChooser8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -433,6 +624,7 @@ public class OwnerPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -442,21 +634,24 @@ public class OwnerPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 
     private void loadTopKasir() {
         try {
             Connection con = koneksi.Go();
-            String query = "SELECT u.nama AS nama_kasir, COUNT(t.id) AS jml_transaksi, SUM(td.qty) AS jml_produk "
+            String query = "SELECT u.username AS nama_kasir, COUNT(t.id_transaksi) AS jml_transaksi, SUM(td.qty) AS jml_produk "
                     + "FROM transaction t "
-                    + "INNER JOIN users u ON t.id_user = u.id "
-                    + "INNER JOIN transaction_detail td ON t.id = td.id_transaksi "
-                    + "GROUP BY u.id, u.nama "
+                    + "INNER JOIN user u ON t.id_user = u.id "
+                    + "INNER JOIN transaction_detail td ON t.id_transaksi = td.id_transaksi "
+                    + "GROUP BY u.id, u.username "
                     + "ORDER BY jml_transaksi DESC";
             PreparedStatement pst = con.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
-            DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable2.getModel();
             model.setRowCount(0);
             int counter = 1;
             while (rs.next()) {
@@ -487,7 +682,7 @@ public class OwnerPage extends javax.swing.JFrame {
             Connection con = koneksi.Go();
             String query = "SELECT DATE(t.timestamp) AS tanggal, SUM(td.qty) AS total_terjual "
                     + "FROM transaction_detail td "
-                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id_transaksi "
                     + "WHERE DATE(t.timestamp) BETWEEN ? AND ? "
                     + "GROUP BY DATE(t.timestamp) "
                     + "ORDER BY DATE(t.timestamp) ASC";
@@ -541,8 +736,8 @@ public class OwnerPage extends javax.swing.JFrame {
             Connection con = koneksi.Go();
             String query = "SELECT SUM((p.harga_jual - p.harga_beli) * td.qty) AS total_profit "
                     + "FROM transaction_detail td "
-                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
-                    + "INNER JOIN produk p ON td.id_produk = p.kode "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id_transaksi "
+                    + "INNER JOIN produk p ON td.nama_barang = p.nama "
                     + "WHERE DATE(t.timestamp) BETWEEN ? AND ?";
             PreparedStatement pst = con.prepareStatement(query);
             pst.setString(1, start);
@@ -581,7 +776,7 @@ public class OwnerPage extends javax.swing.JFrame {
             Connection con = koneksi.Go();
             String query = "SELECT SUM(td.qty) AS total_sold "
                     + "FROM transaction_detail td "
-                    + "INNER JOIN transaction t ON td.id_transaksi = t.id "
+                    + "INNER JOIN transaction t ON td.id_transaksi = t.id_transaksi "
                     + "WHERE DATE(t.timestamp) BETWEEN ? AND ?";
             PreparedStatement pst = con.prepareStatement(query);
             pst.setString(1, start);
@@ -603,11 +798,10 @@ public class OwnerPage extends javax.swing.JFrame {
     private void loadTopProduct() {
         try {
             Connection con = koneksi.Go();
-            String query = "SELECT p.nama AS nama_barang, SUM(td.qty) AS jumlah_terjual "
-                    + "FROM transaction_detail td "
-                    + "INNER JOIN produk p ON td.id_produk = p.kode "
-                    + "GROUP BY p.nama "
-                    + "ORDER BY SUM(td.qty) DESC";
+            String query = "SELECT nama_barang, SUM(qty) AS jumlah_terjual "
+                    + "FROM transaction_detail "
+                    + "GROUP BY nama_barang "
+                    + "ORDER BY SUM(qty) DESC";
             PreparedStatement pst = con.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
             DefaultTableModel model = new DefaultTableModel();
@@ -628,6 +822,24 @@ public class OwnerPage extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan [OP-629]: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+        }
+    }
+
+    private void setDates() {
+        JDateChooser[] dateChoosers = {jDateChooser1, jDateChooser2, jDateChooser3, jDateChooser4, 
+                               jDateChooser5, jDateChooser6, jDateChooser7, jDateChooser8};
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, +1);
+        Date today = calendar.getTime();
+        calendar.add(Calendar.DATE, -2);
+        Date yesterday = calendar.getTime();
+        for (int i = 0; i < dateChoosers.length; i++) {
+            if (i % 2 == 0) {
+                dateChoosers[i].setDate(yesterday);
+            } else {
+                dateChoosers[i].setDate(today);
+            }
         }
     }
 }
